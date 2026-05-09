@@ -2,7 +2,6 @@ package id3v2
 
 import (
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"testing"
@@ -16,7 +15,7 @@ func prepareTestFile() (*os.File, error) {
 	}
 	defer src.Close()
 
-	tmpFile, err := ioutil.TempFile("", "chapter_test")
+	tmpFile, err := os.CreateTemp("", "chapter_test")
 	if err != nil {
 		return nil, err
 	}

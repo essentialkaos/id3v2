@@ -8,7 +8,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math/big"
 	"os"
 	"strings"
@@ -135,7 +135,7 @@ func resetMP3Tag() error {
 }
 
 func mustReadFile(path string) []byte {
-	contents, err := ioutil.ReadFile(path)
+	contents, err := os.ReadFile(path)
 	if err != nil {
 		panic(fmt.Sprintf("can't read %q: %v", path, err))
 	}
@@ -339,7 +339,7 @@ func TestInvalidLanguageCommentFrame(t *testing.T) {
 		Text:     "The actual text",
 	})
 
-	_, err := tag.WriteTo(ioutil.Discard)
+	_, err := tag.WriteTo(io.Discard)
 	if err == nil {
 		t.Fatal("tag.WriteTo() must return the error about invalid language code")
 	}
@@ -361,7 +361,7 @@ func TestInvalidLanguageUSLF(t *testing.T) {
 		Lyrics:   "Lyrics",
 	})
 
-	_, err := tag.WriteTo(ioutil.Discard)
+	_, err := tag.WriteTo(io.Discard)
 	if err == nil {
 		t.Fatal("tag.WriteTo() must return the error about invalid language code")
 	}
@@ -466,8 +466,8 @@ func TestConcurrent(t *testing.T) {
 				return
 			}
 
-			if _, err := tag.WriteTo(ioutil.Discard); err != nil {
-				ec <- fmt.Errorf("Error while writing to ioutil.Discard: %v", err)
+			if _, err := tag.WriteTo(io.Discard); err != nil {
+				ec <- fmt.Errorf("Error while writing to io.Discard: %v", err)
 				return
 			}
 		}()

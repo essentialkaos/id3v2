@@ -402,11 +402,12 @@ func TestParseOptionsParseFramesWithSequenceFrames(t *testing.T) {
 	for _, f := range commentFrames {
 		commentFrame := f.(CommentFrame)
 
-		if commentFrame.Language == "eng" {
+		switch commentFrame.Language {
+		case "eng":
 			isEngCommentInFrame = true
-		} else if commentFrame.Language == "ger" {
+		case "ger":
 			isGerCommentInFrame = true
-		} else {
+		default:
 			t.Errorf("Got unknown comment frame: %v", commentFrame)
 		}
 	}

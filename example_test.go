@@ -2,7 +2,6 @@ package id3v2_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math/big"
 	"os"
@@ -76,7 +75,7 @@ func ExampleTag_AddAttachedPicture() {
 		log.Fatal("Error while opening mp3 file: ", err)
 	}
 
-	artwork, err := ioutil.ReadFile("artwork.jpg")
+	artwork, err := os.ReadFile("artwork.jpg")
 	if err != nil {
 		log.Fatal("Error while reading artwork file", err)
 	}
@@ -206,7 +205,7 @@ func ExamplePictureFrame_get() {
 
 func ExamplePictureFrame_add() {
 	tag := id3v2.NewEmptyTag()
-	artwork, err := ioutil.ReadFile("artwork.jpg")
+	artwork, err := os.ReadFile("artwork.jpg")
 	if err != nil {
 		log.Fatal("Error while reading artwork file", err)
 	}

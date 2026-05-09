@@ -238,8 +238,16 @@ func (tag *Tag) SetArtist(artist string) {
 	tag.AddTextFrame(tag.CommonID("Artist"), tag.DefaultEncoding(), artist)
 }
 
+func (tag *Tag) SetAlbumArtist(albumArtist string) {
+	tag.AddTextFrame(tag.CommonID("Band/Orchestra/Accompaniment"), tag.DefaultEncoding(), albumArtist)
+}
+
 func (tag *Tag) Album() string {
 	return tag.GetTextFrame(tag.CommonID("Album/Movie/Show title")).Text
+}
+
+func (tag *Tag) AlbumArtist() string {
+	return tag.GetTextFrame(tag.CommonID("Band/Orchestra/Accompaniment")).Text
 }
 
 func (tag *Tag) SetAlbum(album string) {
@@ -356,7 +364,7 @@ func (tag *Tag) Save() error {
 	}
 
 	// Seek to a music part of original file.
-	if _, err = originalFile.Seek(tag.originalSize, os.SEEK_SET); err != nil {
+	if _, err = originalFile.Seek(tag.originalSize, io.SeekStart); err != nil {
 		return err
 	}
 
@@ -367,9 +375,15 @@ func (tag *Tag) Save() error {
 		return err
 	}
 
-	// Close files to allow replacing.
-	newFile.Close()
-	originalFile.Close()
+	err = newFile.Close()
+	if err != nil {
+		return err
+	}
+
+	err = originalFile.Close()
+	if err != nil {
+		return err
+	}
 
 	// Replace original file with new file.
 	if err = os.Rename(newFile.Name(), originalFile.Name()); err != nil {

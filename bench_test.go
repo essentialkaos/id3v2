@@ -6,7 +6,7 @@ package id3v2
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"testing"
 )
 
@@ -67,7 +67,7 @@ func BenchmarkWriteISO(b *testing.B) {
 func benchWrite(b *testing.B, encoding Encoding) {
 	tag := NewEmptyTag()
 	setFrames(tag, encoding)
-	if _, err := tag.WriteTo(ioutil.Discard); err != nil {
+	if _, err := tag.WriteTo(io.Discard); err != nil {
 		b.Error("Error while writing a tag:", err)
 	}
 }

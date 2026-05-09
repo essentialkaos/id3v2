@@ -101,21 +101,27 @@ func parseChapterFrame(br *bufReader, version byte) (Framer, error) {
 		if err == io.EOF || err == errBlankFrame || err == ErrInvalidSizeFormat {
 			break
 		}
+
 		if err != nil {
 			return nil, err
 		}
+
 		id, bodySize := header.ID, header.BodySize
+
 		if id == "TIT2" || id == "TIT3" {
 			bodyRd := getLimitedReader(br, bodySize)
 			br := newBufReader(bodyRd)
 			frame, err := parseTextFrame(br)
+
 			if err != nil {
 				putLimitedReader(bodyRd)
 				return nil, err
 			}
-			if id == "TIT2" {
+
+			switch id {
+			case "TIT2":
 				title = frame.(TextFrame)
-			} else if id == "TIT3" {
+			case "TIT3":
 				description = frame.(TextFrame)
 			}
 

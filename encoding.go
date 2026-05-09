@@ -2,7 +2,7 @@ package id3v2
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/charmap"
@@ -57,7 +57,6 @@ var (
 	encodings = []Encoding{EncodingISO, EncodingUTF16, EncodingUTF16BE, EncodingUTF8}
 
 	xencodingISO        = charmap.ISO8859_1
-	xencodingUTF16BEBOM = unicode.UTF16(unicode.BigEndian, unicode.ExpectBOM)
 	xencodingUTF16LEBOM = unicode.UTF16(unicode.LittleEndian, unicode.ExpectBOM)
 	xencodingUTF16BE    = unicode.UTF16(unicode.BigEndian, unicode.IgnoreBOM)
 	xencodingUTF8       = unicode.UTF8
@@ -81,13 +80,12 @@ func encodedSize(src string, enc Encoding) int {
 		return len(src)
 	}
 
-	bw := getBufWriter(ioutil.Discard)
+	bw := getBufWriter(io.Discard)
 	defer putBufWriter(bw)
 
 	encodeWriteText(bw, src, enc)
 
 	return bw.Written()
-
 }
 
 // decodeText decodes src from "from" encoding to UTF-8.
@@ -115,7 +113,7 @@ func decodeText(src []byte, from Encoding) string {
 	if from.Equals(EncodingUTF16) {
 		// bytes.Replace(s, old, new, -1) is the same as bytes.ReplaceAll(s, old, new),
 		// but bytes.ReplaceAll is only added in Go 1.12.
-		result = bytes.Replace(result, []byte{0xEF, 0xBF, 0xBD}, []byte{}, -1)
+		result = bytes.ReplaceAll(result, []byte{0xEF, 0xBF, 0xBD}, []byte{})
 	}
 
 	return string(result)
@@ -136,10 +134,6 @@ func encodeWriteText(bw *bufWriter, src string, to Encoding) error {
 
 	bw.WriteString(encoded)
 
-	if to.Equals(EncodingUTF16) && !bytes.HasSuffix([]byte(encoded), []byte{0}) {
-		bw.WriteByte(0)
-	}
-
 	return nil
 }
 
@@ -148,10 +142,7 @@ func resolveXEncoding(src []byte, encoding Encoding) encoding.Encoding {
 	case 0:
 		return xencodingISO
 	case 1:
-		if len(src) > 2 && bytes.Equal(src[:2], bom) {
-			return xencodingUTF16LEBOM
-		}
-		return xencodingUTF16BEBOM
+		return xencodingUTF16LEBOM
 	case 2:
 		return xencodingUTF16BE
 	}
