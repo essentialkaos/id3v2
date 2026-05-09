@@ -1,16 +1,10 @@
 # id3v2
 
-Implementation of ID3 v2.3 and v2.4 in native Go.
-
-## Installation
-
-```
-go get -u github.com/bogem/id3v2/v2
-```
+Implementation of ID3 v2.4 in native Go.
 
 ## Documentation
 
-https://pkg.go.dev/github.com/bogem/id3v2/v2
+https://pkg.go.dev/github.com/essentialkaos/id3v2
 
 ## Usage example
 
@@ -21,7 +15,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/bogem/id3v2/v2"
+	"github.com/essentialkaos/id3v2"
 )
 
 func main() {
@@ -86,4 +80,3 @@ tag.AddCommentFrame(comment)
 
 `Text` field will be automatically encoded with UTF-16BE with BOM and written to w.
 
-UTF-8 is default for v2.4, ISO-8859-1 - for v2.3.
