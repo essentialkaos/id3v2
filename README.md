@@ -1,6 +1,6 @@
 # id3v2
 
-Implementation of ID3 v2.4 in native Go.
+Implementation of [ID3 v2.4](https://id3.org/id3v2.4.0-frames) in native Go.
 
 ## Documentation
 
