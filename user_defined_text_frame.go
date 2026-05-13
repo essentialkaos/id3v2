@@ -10,6 +10,9 @@ type UserDefinedTextFrame struct {
 	Value       string
 }
 
+// UserURLFrame is used to work with WXXX frames
+type UserURLFrame = UserDefinedTextFrame
+
 func (udtf UserDefinedTextFrame) Size() int {
 	return 1 + encodedSize(udtf.Description, udtf.Encoding) + len(udtf.Encoding.TerminationBytes) + encodedSize(udtf.Value, udtf.Encoding)
 }

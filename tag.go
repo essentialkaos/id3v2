@@ -47,18 +47,18 @@ func (tag *Tag) AddFrame(id string, f Framer) {
 }
 
 // AddAttachedPicture adds the picture frame to tag.
-func (tag *Tag) AddAttachedPicture(pf PictureFrame) {
-	tag.AddFrame(tag.CommonID("Attached picture"), pf)
+func (tag *Tag) AddAttachedPicture(f PictureFrame) {
+	tag.AddFrame(tag.CommonID("Attached picture"), f)
 }
 
 // AddChapterFrame adds the chapter frame to tag.
-func (tag *Tag) AddChapterFrame(cf ChapterFrame) {
-	tag.AddFrame(tag.CommonID("Chapters"), cf)
+func (tag *Tag) AddChapterFrame(f ChapterFrame) {
+	tag.AddFrame(tag.CommonID("Chapters"), f)
 }
 
 // AddCommentFrame adds the comment frame to tag.
-func (tag *Tag) AddCommentFrame(cf CommentFrame) {
-	tag.AddFrame(tag.CommonID("Comments"), cf)
+func (tag *Tag) AddCommentFrame(f CommentFrame) {
+	tag.AddFrame(tag.CommonID("Comments"), f)
 }
 
 // AddTextFrame creates the text frame with provided encoding and text
@@ -69,18 +69,23 @@ func (tag *Tag) AddTextFrame(id string, encoding Encoding, text string) {
 
 // AddUnsynchronisedLyricsFrame adds the unsynchronised lyrics/text frame
 // to tag.
-func (tag *Tag) AddUnsynchronisedLyricsFrame(uslf UnsynchronisedLyricsFrame) {
-	tag.AddFrame(tag.CommonID("Unsynchronised lyrics/text transcription"), uslf)
+func (tag *Tag) AddUnsynchronisedLyricsFrame(f UnsynchronisedLyricsFrame) {
+	tag.AddFrame(tag.CommonID("Unsynchronised lyrics/text transcription"), f)
 }
 
 // AddUserDefinedTextFrame adds the custom frame (TXXX) to tag.
-func (tag *Tag) AddUserDefinedTextFrame(udtf UserDefinedTextFrame) {
-	tag.AddFrame(tag.CommonID("User defined text information frame"), udtf)
+func (tag *Tag) AddUserDefinedTextFrame(f UserDefinedTextFrame) {
+	tag.AddFrame(tag.CommonID("User defined text information frame"), f)
+}
+
+// AddUserURLFrame adds the WXXX framt to tag.
+func (tag *Tag) AddUserURLFrame(id string, f UserURLFrame) {
+	tag.AddFrame(id, f)
 }
 
 // AddUFIDFrame adds the unique file identifier frame (UFID) to tag.
-func (tag *Tag) AddUFIDFrame(ufid UFIDFrame) {
-	tag.AddFrame(tag.CommonID("Unique file identifier"), ufid)
+func (tag *Tag) AddUFIDFrame(f UFIDFrame) {
+	tag.AddFrame(tag.CommonID("Unique file identifier"), f)
 }
 
 // CommonID returns frame ID from given description.
@@ -268,6 +273,26 @@ func (tag *Tag) Genre() string {
 
 func (tag *Tag) SetGenre(genre string) {
 	tag.AddTextFrame(tag.CommonID("Content type"), tag.DefaultEncoding(), genre)
+}
+
+func (tag *Tag) URL() string {
+	frames := tag.GetFrames("WXXX")
+
+	if len(frames) == 0 {
+		return ""
+	}
+
+	frame, ok := frames[0].(UserURLFrame)
+
+	if !ok {
+		return ""
+	}
+
+	return frame.Value
+}
+
+func (tag *Tag) SetURL(url string) {
+	tag.AddUserURLFrame("WXXX", UserURLFrame{Encoding: EncodingISO, Value: url})
 }
 
 // iterateOverAllFrames iterates over every single frame in tag and calls

@@ -54,6 +54,7 @@ var (
 		"User defined text information frame":      "TXXX",
 		"Unique file identifier":                   "UFID",
 		"Unsynchronised lyrics/text transcription": "USLT",
+		"URL link frame":                           "WXXX",
 
 		// Just for convenience.
 		"Artist": "TPE1",
@@ -114,6 +115,7 @@ var (
 		"User defined text information frame":      "TXXX",
 		"Unique file identifier":                   "UFID",
 		"Unsynchronised lyrics/text transcription": "USLT",
+		"URL link frame":                           "WXXX",
 
 		// Deprecated frames of ID3v2.3.
 		"Date":                  "TDRC",
@@ -134,9 +136,10 @@ var (
 // parsing of corresponding frame.
 // You should consider that there is no text frame parser. That's why you should
 // check at first, if it's a text frame:
-//	if strings.HasPrefix(id, "T") {
-//  	...
-//	}
+//
+//		if strings.HasPrefix(id, "T") {
+//	 	...
+//		}
 var parsers = map[string]func(*bufReader, byte) (Framer, error){
 	"APIC": parsePictureFrame,
 	"CHAP": parseChapterFrame,
@@ -145,6 +148,7 @@ var parsers = map[string]func(*bufReader, byte) (Framer, error){
 	"TXXX": parseUserDefinedTextFrame,
 	"UFID": parseUFIDFrame,
 	"USLT": parseUnsynchronisedLyricsFrame,
+	"WXXX": parseUserDefinedTextFrame,
 }
 
 // mustFrameBeInSequence checks if frame with corresponding ID must
